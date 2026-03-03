@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "docgen-anmat": {
+      "command": "node",
+      "args": ["./mcp-docgen-anmat/src/index.js"],
+      "description": "Genera fichas técnicas y documentos para registro de envases ANMAT/INAL"
+    },
+    "tad-browser": {
+      "command": "node",
+      "args": ["./mcp-tad-browser/src/index.js"],
+      "description": "Automatiza la carga de trámites en TAD (Trámites a Distancia)"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun, Hexagon, Activity } from "lucide-react";
+import { Moon, Sun, Hexagon, Activity, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 
@@ -13,6 +13,7 @@ const tabs = [
   { id: "dashboard", label: "Dashboard" },
   { id: "board", label: "Board" },
   { id: "missions", label: "Missions" },
+  { id: "agents", label: "Agentes" },
   { id: "chat", label: "Chat" },
 ];
 

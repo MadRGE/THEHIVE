@@ -1,0 +1,13 @@
+{
+  "name": "mcp-docgen-anmat",
+  "version": "1.0.0",
+  "description": "MCP Server para generar fichas técnicas de envases ANMAT/INAL",
+  "main": "src/index.js",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "docx": "^8.5.0",
+    "sharp": "^0.33.0",
+    "zod": "^3.23.0"
+  }
+}

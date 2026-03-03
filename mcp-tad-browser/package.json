@@ -1,0 +1,12 @@
+{
+  "name": "mcp-tad-browser",
+  "version": "1.0.0",
+  "description": "MCP Server para automatizar carga de trámites en TAD/ANMAT",
+  "main": "src/index.js",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "playwright": "^1.45.0",
+    "zod": "^3.23.0"
+  }
+}

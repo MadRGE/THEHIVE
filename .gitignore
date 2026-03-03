@@ -41,3 +41,12 @@ next-env.d.ts
 
 # database
 /data/*.db
+
+# MCP servers dependencies
+/mcp-docgen-anmat/node_modules
+/mcp-tad-browser/node_modules
+
+# Generated documents
+/output/*.docx
+/output/*.pdf
+!/output/.gitkeep

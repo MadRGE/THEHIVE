@@ -6,6 +6,7 @@ import { DashboardView } from "@/components/dashboard-view";
 import { KanbanBoard } from "@/components/kanban-board";
 import { MissionsView } from "@/components/missions-view";
 import { ChatPanel } from "@/components/chat-panel";
+import { AgentsView } from "@/components/agents-view";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -17,6 +18,7 @@ export default function Home() {
         {activeTab === "dashboard" && <DashboardView />}
         {activeTab === "board" && <KanbanBoard />}
         {activeTab === "missions" && <MissionsView />}
+        {activeTab === "agents" && <AgentsView />}
         {activeTab === "chat" && <ChatPanel />}
       </main>
     </div>
