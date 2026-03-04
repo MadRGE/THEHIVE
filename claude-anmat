@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────
-# Chipi Agent — Acceso directo al sistema
-# Sistema Multi-Agente ANMAT/INAL
+# Claude ANMAT — Sistema Multi-Agente
+# Registro de Envases ANMAT/INAL
 # ──────────────────────────────────────────────
 
 set -e
@@ -19,7 +19,7 @@ NC='\033[0m'
 print_banner() {
   echo ""
   echo -e "${PURPLE}┌──────────────────────────────────────────┐${NC}"
-  echo -e "${PURPLE}│${NC}  ${YELLOW}CHIPI AGENT${NC} — Sistema Multi-Agente      ${PURPLE}│${NC}"
+  echo -e "${PURPLE}│${NC}  ${YELLOW}CLAUDE ANMAT${NC} — Sistema Multi-Agente     ${PURPLE}│${NC}"
   echo -e "${PURPLE}│${NC}  Registro de Envases ANMAT/INAL          ${PURPLE}│${NC}"
   echo -e "${PURPLE}└──────────────────────────────────────────┘${NC}"
   echo ""
@@ -63,7 +63,7 @@ start_mcp() {
 }
 
 show_help() {
-  echo "Uso: ./chipi [comando]"
+  echo "Uso: ./claude-anmat [comando]"
   echo ""
   echo "Comandos:"
   echo "  start       Arranca el portal web + muestra info de MCP servers"

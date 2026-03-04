@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude ANMAT — Sistema Multi-Agente</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ─── Header ─── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <h1>Claude ANMAT</h1>
+      </div>
+      <span class="badge badge-outline">Multi-Agente</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="overview">General</button>
+      <button class="nav-btn" data-tab="agente1">Agente 1</button>
+      <button class="nav-btn" data-tab="agente2">Agente 2</button>
+      <button class="nav-btn" data-tab="agente3">Agente 3</button>
+      <button class="nav-btn" data-tab="mcp">MCP Servers</button>
+    </nav>
+    <div class="header-right">
+      <div class="status-indicator">
+        <span class="dot dot-green"></span>
+        <span>Claude Online</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- ─── Tab: Overview ─── -->
+    <div class="tab-content active" id="tab-overview">
+      <!-- Quick Start -->
+      <div class="card card-highlight">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Inicio Rápido
+          </h2>
+          <span class="badge badge-outline">./claude-anmat</span>
+        </div>
+        <div class="card-body">
+          <div class="quick-start-grid">
+            <button class="quick-cmd" onclick="copyCmd('Registrame un envase de PET para alimentos secos')">
+              <span class="quick-cmd-label">Registro rápido</span>
+              <code>Registrame un envase de PET para alimentos secos</code>
+              <span class="quick-cmd-desc">Inicia el flujo completo en Claude Code</span>
+            </button>
+            <button class="quick-cmd" onclick="copyCmd('./claude-anmat start')">
+              <span class="quick-cmd-label">Terminal</span>
+              <code>./claude-anmat start</code>
+              <span class="quick-cmd-desc">Arranca portal + MCP servers</span>
+            </button>
+            <button class="quick-cmd" onclick="copyCmd('npm run claude')">
+              <span class="quick-cmd-label">npm</span>
+              <code>npm run claude</code>
+              <span class="quick-cmd-desc">Equivalente via npm</span>
+            </button>
+          </div>
+          <p class="text-muted small">Click en cualquier comando para copiarlo al portapapeles.</p>
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Arquitectura del Sistema</h2>
+        </div>
+        <div class="card-body">
+          <pre class="architecture-diagram">
+┌──────────────────────────────────────────────────────────────┐
+│                    CLAUDE CODE (Orquestador)                  │
+│                                                              │
+│   "Registrame este envase de [PRODUCTO]"                     │
+│                                                              │
+│   ┌──────────────┐  ┌───────────────┐  ┌──────────────┐     │
+│   │  AGENTE 1    │  │  AGENTE 2     │  │  AGENTE 3    │     │
+│   │  Análisis    │  │  Generación   │  │  Carga TAD   │     │
+│   │  + Ficha     │  │  Documento    │  │  (Browser)   │     │
+│   │  Preliminar  │  │  Final        │  │              │     │
+│   └──────┬───────┘  └──────┬────────┘  └──────┬───────┘     │
+│          │                 │                   │             │
+│     ┌────▼─────┐    ┌─────▼──────┐     ┌──────▼───────┐     │
+│     │ MCP:     │    │ MCP:       │     │ MCP:         │     │
+│     │ Vision   │    │ DocGen     │     │ Playwright   │     │
+│     │ + Files  │    │ (docx)     │     │ + TAD        │     │
+│     └──────────┘    └────────────┘     └──────────────┘     │
+└──────────────────────────────────────────────────────────────┘
+          </pre>
+        </div>
+      </div>
+
+      <!-- Agent Cards -->
+      <div class="agents-grid">
+        <div class="card agent-card" data-color="blue">
+          <div class="agent-card-stripe stripe-blue"></div>
+          <div class="card-header">
+            <div class="agent-header">
+              <div class="agent-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </div>
+              <div>
+                <h3 class="card-title small">Agente 1 — Análisis</h3>
+                <p class="text-muted small">Analiza fotos, identifica materiales, genera ficha preliminar</p>
+              </div>
+            </div>
+            <span class="badge badge-idle">Inactivo</span>
+          </div>
+          <div class="card-body">
+            <div class="agent-mcp-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>MCP: DocGen ANMAT</span>
+              <span class="dot dot-gray" id="dot-docgen-1"></span>
+            </div>
+            <div class="tools-list">
+              <span class="tool-badge">generar_ficha_preliminar</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card agent-card" data-color="emerald">
+          <div class="agent-card-stripe stripe-emerald"></div>
+          <div class="card-header">
+            <div class="agent-header">
+              <div class="agent-icon icon-emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div>
+                <h3 class="card-title small">Agente 2 — DocGen</h3>
+                <p class="text-muted small">Genera documento Word/PDF final con plantilla ANMAT</p>
+              </div>
+            </div>
+            <span class="badge badge-idle">Inactivo</span>
+          </div>
+          <div class="card-body">
+            <div class="agent-mcp-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>MCP: DocGen ANMAT</span>
+              <span class="dot dot-gray" id="dot-docgen-2"></span>
+            </div>
+            <div class="tools-list">
+              <span class="tool-badge">generar_documento_final</span>
+              <span class="tool-badge">generar_declaracion_fabricante</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card agent-card" data-color="purple">
+          <div class="agent-card-stripe stripe-purple"></div>
+          <div class="card-header">
+            <div class="agent-header">
+              <div class="agent-icon icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div>
+                <h3 class="card-title small">Agente 3 — TAD Browser</h3>
+                <p class="text-muted small">Automatiza la carga en Trámites a Distancia</p>
+              </div>
+            </div>
+            <span class="badge badge-idle">Inactivo</span>
+          </div>
+          <div class="card-body">
+            <div class="agent-mcp-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>MCP: TAD Browser</span>
+              <span class="dot dot-gray" id="dot-tad-1"></span>
+            </div>
+            <div class="tools-list">
+              <span class="tool-badge">tad_login</span>
+              <span class="tool-badge">tad_navegar_registro_envase</span>
+              <span class="tool-badge">tad_completar_formulario</span>
+              <span class="tool-badge">tad_subir_documento</span>
+              <span class="tool-badge">tad_screenshot</span>
+              <span class="tool-badge">tad_cerrar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Flujo de Trabajo</h2>
+        </div>
+        <div class="card-body">
+          <div class="workflow">
+            <div class="workflow-step">
+              <div class="step-number step-blue">1</div>
+              <div class="step-content">
+                <strong>Recepción de datos</strong>
+                <p class="text-muted small">Foto del producto + datos del fabricante + importador</p>
+              </div>
+            </div>
+            <div class="workflow-arrow">&rarr;</div>
+            <div class="workflow-step">
+              <div class="step-number step-blue">2</div>
+              <div class="step-content">
+                <strong>Ficha Preliminar</strong>
+                <p class="text-muted small">Agente 1 analiza y genera ficha para revisión</p>
+              </div>
+            </div>
+            <div class="workflow-arrow">&rarr;</div>
+            <div class="workflow-step">
+              <div class="step-number step-amber">3</div>
+              <div class="step-content">
+                <strong>Revisión</strong>
+                <p class="text-muted small">El usuario revisa, corrige y confirma</p>
+              </div>
+            </div>
+            <div class="workflow-arrow">&rarr;</div>
+            <div class="workflow-step">
+              <div class="step-number step-emerald">4</div>
+              <div class="step-content">
+                <strong>Documento Final</strong>
+                <p class="text-muted small">Agente 2 genera DOCX + Declaración</p>
+              </div>
+            </div>
+            <div class="workflow-arrow">&rarr;</div>
+            <div class="workflow-step">
+              <div class="step-number step-purple">5</div>
+              <div class="step-content">
+                <strong>Carga TAD</strong>
+                <p class="text-muted small">Agente 3 sube documentación al trámite</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab: Agente 1 ─── -->
+    <div class="tab-content" id="tab-agente1">
+      <div class="card">
+        <div class="card-header">
+          <div class="agent-header">
+            <div class="agent-icon icon-blue" style="width:48px;height:48px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <div>
+              <h2 class="card-title">Agente 1 — Análisis + Ficha Preliminar</h2>
+              <p class="text-muted">Analiza fotos del producto, identifica materiales, tipo de envase, y genera una ficha preliminar para revisión.</p>
+            </div>
+          </div>
+          <span class="badge badge-idle">Inactivo</span>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Pasos del Agente</h3></div>
+          <div class="card-body">
+            <ol class="step-list">
+              <li>Recibir foto del producto y datos del fabricante</li>
+              <li>Analizar imagen con Vision (material, forma, tipo)</li>
+              <li>Clasificar según CAA (Código Alimentario Argentino)</li>
+              <li>Generar ficha preliminar en JSON</li>
+              <li>Mostrar al usuario para revisión</li>
+            </ol>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Tools Disponibles</h3></div>
+          <div class="card-body">
+            <div class="tool-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <code>generar_ficha_preliminar</code>
+              <span class="badge badge-outline">DocGen ANMAT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3 class="card-title small">Conexión MCP</h3></div>
+        <div class="card-body">
+          <div class="mcp-connection">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            <div>
+              <strong>DocGen ANMAT</strong>
+              <code class="text-muted small">node ./mcp-docgen-anmat/src/index.js</code>
+            </div>
+            <span class="dot dot-gray" id="dot-agent1-mcp"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab: Agente 2 ─── -->
+    <div class="tab-content" id="tab-agente2">
+      <div class="card">
+        <div class="card-header">
+          <div class="agent-header">
+            <div class="agent-icon icon-emerald" style="width:48px;height:48px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <h2 class="card-title">Agente 2 — Generación de Documento Final</h2>
+              <p class="text-muted">Toma los datos confirmados y genera el Word/PDF final usando plantillas de Ficha Técnica de Envase.</p>
+            </div>
+          </div>
+          <span class="badge badge-idle">Inactivo</span>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Pasos del Agente</h3></div>
+          <div class="card-body">
+            <ol class="step-list">
+              <li>Recibir ficha confirmada por el usuario</li>
+              <li>Seleccionar plantilla (Riesgo 2, Silo, Declaración)</li>
+              <li>Generar documento DOCX con formato ANMAT</li>
+              <li>Opcionalmente generar Declaración del Fabricante</li>
+              <li>Guardar en carpeta output/</li>
+            </ol>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Tools Disponibles</h3></div>
+          <div class="card-body">
+            <div class="tool-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <code>generar_documento_final</code>
+              <span class="badge badge-outline">DocGen ANMAT</span>
+            </div>
+            <div class="tool-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <code>generar_declaracion_fabricante</code>
+              <span class="badge badge-outline">DocGen ANMAT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab: Agente 3 ─── -->
+    <div class="tab-content" id="tab-agente3">
+      <div class="card">
+        <div class="card-header">
+          <div class="agent-header">
+            <div class="agent-icon icon-purple" style="width:48px;height:48px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div>
+              <h2 class="card-title">Agente 3 — Carga TAD (Browser)</h2>
+              <p class="text-muted">Abre browser con Playwright, navega a TAD, completa formulario y sube documentación.</p>
+            </div>
+          </div>
+          <span class="badge badge-idle">Inactivo</span>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Pasos del Agente</h3></div>
+          <div class="card-body">
+            <ol class="step-list">
+              <li>Login en TAD (el usuario completa clave fiscal)</li>
+              <li>Navegar al formulario de registro de envase</li>
+              <li>Completar campos del formulario</li>
+              <li>Subir documentos generados</li>
+              <li>Verificar con screenshot</li>
+              <li>Esperar confirmación del usuario para enviar</li>
+            </ol>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title small">Tools Disponibles</h3></div>
+          <div class="card-body">
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_login</code><span class="badge badge-outline">TAD Browser</span></div>
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_navegar_registro_envase</code><span class="badge badge-outline">TAD Browser</span></div>
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_completar_formulario</code><span class="badge badge-outline">TAD Browser</span></div>
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_subir_documento</code><span class="badge badge-outline">TAD Browser</span></div>
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_screenshot</code><span class="badge badge-outline">TAD Browser</span></div>
+            <div class="tool-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><code>tad_cerrar</code><span class="badge badge-outline">TAD Browser</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab: MCP Servers ─── -->
+    <div class="tab-content" id="tab-mcp">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            Gestor de Conexiones MCP
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Los MCP Servers proveen las herramientas que usan los agentes. Conectalos, desconectalos o reinicialos desde acá.</p>
+        </div>
+      </div>
+
+      <!-- DocGen Server -->
+      <div class="card mcp-server-card" id="server-docgen">
+        <div class="card-header">
+          <div class="mcp-server-header">
+            <span class="dot dot-gray" id="mcp-dot-docgen"></span>
+            <div>
+              <h3 class="card-title small">DocGen ANMAT</h3>
+              <p class="text-muted small">Genera fichas técnicas y documentos para registro de envases ANMAT/INAL</p>
+            </div>
+          </div>
+          <div class="mcp-actions">
+            <button class="btn btn-primary" onclick="toggleServer('docgen')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+              <span>Conectar</span>
+            </button>
+            <button class="btn btn-outline" onclick="restartServer('docgen')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Reiniciar</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mcp-details">
+            <div>
+              <span class="label">Comando</span>
+              <code>node ./mcp-docgen-anmat/src/index.js</code>
+            </div>
+            <div>
+              <span class="label">Estado</span>
+              <span class="badge badge-outline" id="mcp-status-docgen">Desconectado</span>
+            </div>
+          </div>
+          <div class="mcp-tools">
+            <span class="label">Tools disponibles (3)</span>
+            <div class="tools-list">
+              <span class="tool-badge">generar_ficha_preliminar</span>
+              <span class="tool-badge">generar_documento_final</span>
+              <span class="tool-badge">generar_declaracion_fabricante</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAD Server -->
+      <div class="card mcp-server-card" id="server-tad">
+        <div class="card-header">
+          <div class="mcp-server-header">
+            <span class="dot dot-gray" id="mcp-dot-tad"></span>
+            <div>
+              <h3 class="card-title small">TAD Browser</h3>
+              <p class="text-muted small">Automatiza la carga de trámites en TAD (Trámites a Distancia)</p>
+            </div>
+          </div>
+          <div class="mcp-actions">
+            <button class="btn btn-primary" onclick="toggleServer('tad')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+              <span>Conectar</span>
+            </button>
+            <button class="btn btn-outline" onclick="restartServer('tad')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Reiniciar</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mcp-details">
+            <div>
+              <span class="label">Comando</span>
+              <code>node ./mcp-tad-browser/src/index.js</code>
+            </div>
+            <div>
+              <span class="label">Estado</span>
+              <span class="badge badge-outline" id="mcp-status-tad">Desconectado</span>
+            </div>
+          </div>
+          <div class="mcp-tools">
+            <span class="label">Tools disponibles (6)</span>
+            <div class="tools-list">
+              <span class="tool-badge">tad_login</span>
+              <span class="tool-badge">tad_navegar_registro_envase</span>
+              <span class="tool-badge">tad_completar_formulario</span>
+              <span class="tool-badge">tad_subir_documento</span>
+              <span class="tool-badge">tad_screenshot</span>
+              <span class="tool-badge">tad_cerrar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Config -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title small">Configuración (.claude/settings.json)</h3>
+        </div>
+        <div class="card-body">
+          <pre class="config-preview">{
+  "mcpServers": {
+    "docgen-anmat": {
+      "command": "node",
+      "args": ["./mcp-docgen-anmat/src/index.js"],
+      "description": "Genera fichas técnicas y documentos para registro de envases ANMAT/INAL"
+    },
+    "tad-browser": {
+      "command": "node",
+      "args": ["./mcp-tad-browser/src/index.js"],
+      "description": "Automatiza la carga de trámites en TAD (Trámites a Distancia)"
+    }
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

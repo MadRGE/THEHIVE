@@ -600,12 +600,12 @@ function QuickStartCard() {
     },
     {
       label: "Terminal",
-      cmd: './chipi start',
+      cmd: './claude-anmat start',
       desc: "Arranca portal + MCP servers",
     },
     {
       label: "npm",
-      cmd: 'npm run chipi',
+      cmd: 'npm run claude',
       desc: "Equivalente via npm",
     },
   ];
@@ -626,7 +626,7 @@ function QuickStartCard() {
           </CardTitle>
           <Badge variant="outline" className="gap-1 text-xs">
             <Terminal className="h-3 w-3" />
-            ./chipi
+            ./claude-anmat
           </Badge>
         </div>
       </CardHeader>

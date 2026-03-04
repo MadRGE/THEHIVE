@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "db:setup": "node scripts/setup-db.mjs",
-    "chipi": "./chipi start",
-    "chipi:portal": "./chipi portal",
-    "chipi:mcp": "./chipi mcp",
-    "chipi:install": "./chipi install"
+    "claude": "./claude-anmat start",
+    "claude:portal": "./claude-anmat portal",
+    "claude:mcp": "./claude-anmat mcp",
+    "claude:install": "./claude-anmat install"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
