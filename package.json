@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:setup": "node scripts/setup-db.mjs"
+    "db:setup": "node scripts/setup-db.mjs",
+    "chipi": "./chipi start",
+    "chipi:portal": "./chipi portal",
+    "chipi:mcp": "./chipi mcp",
+    "chipi:install": "./chipi install"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

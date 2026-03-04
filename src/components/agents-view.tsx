@@ -20,6 +20,10 @@ import {
   CheckCircle2,
   Clock,
   Loader2,
+  Rocket,
+  Copy,
+  Check,
+  Terminal,
 } from "lucide-react";
 
 // ─── Types ───
@@ -236,6 +240,9 @@ function OverviewPanel({ mcpServers }: { mcpServers: McpServerConfig[] }) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Quick Start */}
+      <QuickStartCard />
 
       {/* Agent cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -578,6 +585,77 @@ function McpManagerPanel({
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// ─── Quick Start Card ───
+function QuickStartCard() {
+  const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
+
+  const commands = [
+    {
+      label: "Registro rápido",
+      cmd: 'Registrame un envase de PET para alimentos secos',
+      desc: "Inicia el flujo completo de registro",
+    },
+    {
+      label: "Terminal",
+      cmd: './chipi start',
+      desc: "Arranca portal + MCP servers",
+    },
+    {
+      label: "npm",
+      cmd: 'npm run chipi',
+      desc: "Equivalente via npm",
+    },
+  ];
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCmd(text);
+    setTimeout(() => setCopiedCmd(null), 2000);
+  };
+
+  return (
+    <Card className="border-primary/20 bg-primary/[0.02]">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Rocket className="h-5 w-5 text-primary" />
+            Inicio Rápido
+          </CardTitle>
+          <Badge variant="outline" className="gap-1 text-xs">
+            <Terminal className="h-3 w-3" />
+            ./chipi
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {commands.map((item) => (
+            <button
+              key={item.cmd}
+              onClick={() => copyToClipboard(item.cmd)}
+              className="group text-left p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
+                {copiedCmd === item.cmd ? (
+                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                )}
+              </div>
+              <code className="text-sm font-mono block truncate">{item.cmd}</code>
+              <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          Click en cualquier comando para copiarlo al portapapeles. Pegalo en Claude Code o en la terminal.
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 

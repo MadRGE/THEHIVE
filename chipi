@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+# ──────────────────────────────────────────────
+# Chipi Agent — Acceso directo al sistema
+# Sistema Multi-Agente ANMAT/INAL
+# ──────────────────────────────────────────────
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+print_banner() {
+  echo ""
+  echo -e "${PURPLE}┌──────────────────────────────────────────┐${NC}"
+  echo -e "${PURPLE}│${NC}  ${YELLOW}CHIPI AGENT${NC} — Sistema Multi-Agente      ${PURPLE}│${NC}"
+  echo -e "${PURPLE}│${NC}  Registro de Envases ANMAT/INAL          ${PURPLE}│${NC}"
+  echo -e "${PURPLE}└──────────────────────────────────────────┘${NC}"
+  echo ""
+}
+
+check_deps() {
+  if ! command -v node &> /dev/null; then
+    echo -e "${RED}Error: Node.js no está instalado${NC}"
+    exit 1
+  fi
+
+  if [ ! -d "mcp-docgen-anmat/node_modules" ]; then
+    echo -e "${YELLOW}Instalando dependencias de mcp-docgen-anmat...${NC}"
+    (cd mcp-docgen-anmat && npm install)
+  fi
+
+  if [ ! -d "mcp-tad-browser/node_modules" ]; then
+    echo -e "${YELLOW}Instalando dependencias de mcp-tad-browser...${NC}"
+    (cd mcp-tad-browser && npm install)
+  fi
+
+  if [ ! -d "node_modules" ]; then
+    echo -e "${YELLOW}Instalando dependencias del portal...${NC}"
+    npm install
+  fi
+}
+
+start_portal() {
+  echo -e "${BLUE}[Portal]${NC} Arrancando portal web en http://localhost:3000 ..."
+  npm run dev &
+  PORTAL_PID=$!
+  echo -e "${GREEN}[Portal]${NC} PID: $PORTAL_PID"
+}
+
+start_mcp() {
+  echo -e "${BLUE}[MCP]${NC} Los MCP servers se inician automáticamente via Claude Code."
+  echo -e "${BLUE}[MCP]${NC} Configuración en .claude/settings.json"
+  echo ""
+  echo -e "  ${GREEN}docgen-anmat${NC}  → node ./mcp-docgen-anmat/src/index.js"
+  echo -e "  ${GREEN}tad-browser${NC}   → node ./mcp-tad-browser/src/index.js"
+}
+
+show_help() {
+  echo "Uso: ./chipi [comando]"
+  echo ""
+  echo "Comandos:"
+  echo "  start       Arranca el portal web + muestra info de MCP servers"
+  echo "  portal      Arranca solo el portal web"
+  echo "  mcp         Muestra estado de MCP servers"
+  echo "  build       Compila el portal para producción"
+  echo "  install     Instala todas las dependencias"
+  echo "  help        Muestra esta ayuda"
+  echo ""
+  echo "Sin argumentos arranca todo (portal + info MCP)."
+}
+
+cleanup() {
+  echo ""
+  echo -e "${YELLOW}Apagando...${NC}"
+  if [ -n "$PORTAL_PID" ]; then
+    kill $PORTAL_PID 2>/dev/null || true
+  fi
+  exit 0
+}
+
+# ─── Main ───
+print_banner
+
+case "${1:-start}" in
+  start)
+    check_deps
+    start_mcp
+    echo ""
+    start_portal
+    echo ""
+    echo -e "${GREEN}Sistema listo.${NC}"
+    echo -e "Portal: ${BLUE}http://localhost:3000${NC} → pestaña ${YELLOW}Agentes${NC}"
+    echo -e "Para registrar un envase, abrí Claude Code y decí:"
+    echo -e "  ${YELLOW}\"Registrame un envase de PET para alimentos secos\"${NC}"
+    echo ""
+    trap cleanup SIGINT SIGTERM
+    wait $PORTAL_PID
+    ;;
+  portal)
+    check_deps
+    start_portal
+    trap cleanup SIGINT SIGTERM
+    wait $PORTAL_PID
+    ;;
+  mcp)
+    start_mcp
+    ;;
+  build)
+    check_deps
+    echo -e "${BLUE}[Build]${NC} Compilando portal..."
+    npm run build
+    echo -e "${GREEN}[Build]${NC} Listo."
+    ;;
+  install)
+    echo -e "${BLUE}[Install]${NC} Instalando todas las dependencias..."
+    npm install
+    (cd mcp-docgen-anmat && npm install)
+    (cd mcp-tad-browser && npm install)
+    echo -e "${GREEN}[Install]${NC} Todo instalado."
+    ;;
+  help|--help|-h)
+    show_help
+    ;;
+  *)
+    echo -e "${RED}Comando desconocido: $1${NC}"
+    show_help
+    exit 1
+    ;;
+esac
