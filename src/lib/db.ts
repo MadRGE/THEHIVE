@@ -3,8 +3,19 @@ import path from "path";
 import fs from "fs";
 
 const DATA_DIR = path.join(process.cwd(), "data");
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (err: unknown) {
+  const message = err instanceof Error ? err.message : String(err);
+  if (process.platform === "win32" && message.includes("EPERM")) {
+    console.error(
+      `[TheHive] Permission denied creating data directory: ${DATA_DIR}\n` +
+        "Try running your terminal as Administrator, or check that your antivirus is not blocking file creation."
+    );
+  }
+  throw err;
 }
 
 const DB_PATH = path.join(DATA_DIR, "mission-control.db");
@@ -13,10 +24,33 @@ let _db: Database.Database | null = null;
 
 function getDb(): Database.Database {
   if (!_db) {
-    _db = new Database(DB_PATH);
-    _db.pragma("journal_mode = WAL");
-    _db.pragma("foreign_keys = ON");
-    initSchema(_db);
+    try {
+      _db = new Database(DB_PATH);
+      _db.pragma("journal_mode = WAL");
+      _db.pragma("foreign_keys = ON");
+      initSchema(_db);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.includes("unable to open database")) {
+        const hint =
+          process.platform === "win32"
+            ? "On Windows, ensure:\n" +
+              "  1. The data/ folder is not read-only (right-click > Properties > uncheck Read-only)\n" +
+              "  2. Your antivirus is not blocking SQLite file access\n" +
+              "  3. The path does not contain special characters\n" +
+              "  4. Try running your terminal as Administrator"
+            : "Check file permissions on the data/ directory.";
+        console.error(
+          `[TheHive] Failed to open database at: ${DB_PATH}\n${hint}`
+        );
+      }
+      if (message.includes("not a valid Win32 application") || message.includes("was compiled against a different Node.js version")) {
+        console.error(
+          `[TheHive] Native module mismatch. Run: npm rebuild better-sqlite3`
+        );
+      }
+      throw err;
+    }
   }
   return _db;
 }

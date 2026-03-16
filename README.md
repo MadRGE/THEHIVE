@@ -32,17 +32,71 @@ npm install
 ```
 
 2. Configure environment:
+
+**macOS / Linux:**
 ```bash
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
 ```
 
-3. Run:
+**Windows (CMD):**
+```cmd
+copy .env.example .env
+```
+
+**Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
+```
+
+Edit `.env` and add your `ANTHROPIC_API_KEY`.
+
+3. Validate setup (optional but recommended):
+```bash
+npm run setup
+```
+
+4. Run:
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Windows Troubleshooting
+
+If you have issues running TheHive on Windows:
+
+### `npm install` fails with `node-gyp` errors
+The `better-sqlite3` package requires native compilation. Install build tools:
+```cmd
+npm install --global windows-build-tools
+```
+Or install [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with the "Desktop development with C++" workload, then run:
+```cmd
+npm rebuild better-sqlite3
+```
+
+### `EPERM` or permission errors
+- Run your terminal (CMD or PowerShell) as **Administrator**
+- Check that your antivirus is not blocking Node.js or SQLite file access
+- Make sure the `data/` folder is not marked as read-only
+
+### Port 3000 already in use
+Change the port in `.env`:
+```
+PORT=3001
+```
+Or find and stop the process using port 3000:
+```cmd
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+```
+
+### `not a valid Win32 application` error
+Your native modules were compiled for a different platform or Node version. Fix with:
+```cmd
+npm rebuild better-sqlite3
+```
 
 ## Environment Variables
 
